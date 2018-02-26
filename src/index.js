@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import url from 'url';
-import { addSeconds, isPast } from 'date-fns';
+import { addSeconds, isFuture } from 'date-fns';
 
 import { AES265GCM } from './lib/crypto';
 import passport from './lib/passport';
@@ -24,6 +24,9 @@ app.use(
     secret: config.get('core.secretKey'),
     resave: true,
     saveUninitialized: true,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000 /* 1 day */,
+    },
   })
 );
 app.use(passport.initialize());
@@ -32,8 +35,8 @@ app.use(passport.session());
 app.get('/', (req, res) => res.status(401).end());
 
 app.get('/test', (req, res) => {
-  if (req.session.provider && req.session.userId && !isPast(req.session.expiredAt)) {
-    res.status(200).end();
+  if (req.session.provider && req.session.userId && isFuture(req.session.expiredAt)) {
+    return res.status(200).end();
   }
   req.session.destroy(() => {
     res.status(401).end();
@@ -75,7 +78,7 @@ PROVIDER_LIST.forEach(provider => {
         provider: req.user.provider,
         userId: req.user.id,
         backUrl: req.session.backUrl,
-        expiredAt: addSeconds(Date.now(), parseInt(config.get('core.refreshInterval'), 10)),
+        expiredAt: addSeconds(Date.now(), parseInt(config.get('core.refreshInterval'), 10)).valueOf(),
       });
       const redirectUrl = urlResolve({ query: { encrypted } }, req.session.callback);
       res.redirect(redirectUrl);
