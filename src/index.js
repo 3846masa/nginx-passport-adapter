@@ -17,6 +17,10 @@ const PROVIDER_LIST = Object.freeze(Object.keys(passport._strategies).filter(p =
 const aesCrypto = new AES265GCM(config.get('core.secretKey'));
 const app = express();
 
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', true);
+}
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -24,6 +28,9 @@ app.use(
     secret: config.get('core.secretKey'),
     resave: true,
     saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+    },
   })
 );
 app.use(passport.initialize());
