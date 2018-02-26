@@ -6,6 +6,8 @@
 
 ---
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/3846masa/nginx-passport-adapter.svg)](https://greenkeeper.io/)
+
 > Authentication system for nginx auth_request using passport.
 
 Use passport for your nginx's authentication via ngx_http_auth_request_module.
