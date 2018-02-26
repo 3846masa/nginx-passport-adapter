@@ -1,0 +1,21 @@
+{
+  "core": {
+    "secretKey": "NGX_PASSPORT_SECRET_KEY",
+    "hostUrl": "NGX_PASSPORT_HOST_URL",
+    "refreshInterval": "NGX_PASSPORT_REFRESH_INTERVAL",
+    "defaultProvider": "NGX_PASSPORT_DEFAULT_PROVIDER",
+    "port": "PORT"
+  },
+  "providers": {
+    "discord": {
+      "clientId": "NGX_PASSPORT_DISCORD_CLIENT_ID",
+      "clientSecret": "NGX_PASSPORT_DISCORD_CLIENT_SECRET",
+      "guildId": "NGX_PASSPORT_DISCORD_GUILD_ID"
+    },
+    "slack": {
+      "clientId": "NGX_PASSPORT_SLACK_CLIENT_ID",
+      "clientSecret": "NGX_PASSPORT_SLACK_CLIENT_SECRET",
+      "teamId": "NGX_PASSPORT_SLACK_TEAM_ID"
+    }
+  }
+}
