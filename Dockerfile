@@ -8,5 +8,4 @@ COPY src ./src
 COPY config ./config
 
 ENV PORT 3000
-ENV NODE_ENV production
 CMD ["yarn", "start"]
