@@ -35,13 +35,14 @@ Inspired by [sorah/nginx_omniauth_adapter](https://github.com/sorah/nginx_omniau
 
 See [.env.sample](./.env.sample)
 
-| ENV                           | Example                     |
-| :---------------------------- | :-------------------------- |
-| PORT                          | 3000                        |
-| NGX_PASSPORT_SECRET_KEY       | `$ openssl rand -base64 32` |
-| NGX_PASSPORT_HOST_URL         | https://auth.example.com    |
-| NGX_PASSPORT_REFRESH_INTERVAL | 3600                        |
-| NGX_PASSPORT_DEFAULT_PROVIDER | slack                       |
+| ENV                                   | Example                     |
+| :------------------------------------ | :-------------------------- |
+| PORT                                  | 3000                        |
+| NGX_PASSPORT_SECRET_KEY               | `$ openssl rand -base64 32` |
+| NGX_PASSPORT_HOST_URL                 | https://auth.example.com    |
+| NGX_PASSPORT_APP_REFRESH_INTERVAL     | 86400                       |
+| NGX_PASSPORT_ADAPTER_REFRESH_INTERVAL | 604800                      |
+| NGX_PASSPORT_DEFAULT_PROVIDER         | slack                       |
 
 #### Discord
 | ENV                                |

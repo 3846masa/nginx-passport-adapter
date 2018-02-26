@@ -21,11 +21,12 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
+    name: 'nginx_passport_adapter',
     secret: config.get('core.secretKey'),
     resave: true,
     saveUninitialized: true,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000 /* 1 day */,
+      maxAge: 365 * 24 * 60 * 60 * 1000,
     },
   })
 );
@@ -58,14 +59,32 @@ app.get('/initiate', (req, res) => {
   res.redirect(redirectUrl);
 });
 
-app.get('/auth', (req, res, next) => {
-  if (!req.query.provider) {
-    return res.status(400).end();
-  }
-  req.session.backUrl = req.query.back;
-  req.session.callback = req.query.callback;
-  return res.redirect(`/auth/${req.query.provider}`);
-});
+const callbackAfterAuthed = (req, res) => {
+  const encrypted = aesCrypto.encrypt({
+    provider: req.user.provider,
+    userId: req.user.id,
+    backUrl: req.session.backUrl,
+    expiredAt: addSeconds(Date.now(), parseInt(config.get('core.appRefreshInterval'), 10)).valueOf(),
+  });
+  const redirectUrl = urlResolve({ query: { encrypted } }, req.session.callback);
+  res.redirect(redirectUrl);
+};
+
+app.get(
+  '/auth',
+  (req, res, next) => {
+    if (!req.query.provider) {
+      return res.status(400).end();
+    }
+    req.session.backUrl = req.query.back;
+    req.session.callback = req.query.callback;
+    if (req.isAuthenticated() && isFuture(req.session.expiredAt)) {
+      return next();
+    }
+    return res.redirect(`/auth/${req.query.provider}`);
+  },
+  callbackAfterAuthed
+);
 
 PROVIDER_LIST.forEach(provider => {
   app.get(`/auth/${provider.toLowerCase()}`, passport.authenticate(provider));
@@ -73,16 +92,11 @@ PROVIDER_LIST.forEach(provider => {
   app.get(
     `/auth/${provider.toLowerCase()}/callback`,
     passport.authenticate(provider, { failureRedirect: '/' }),
-    (req, res) => {
-      const encrypted = aesCrypto.encrypt({
-        provider: req.user.provider,
-        userId: req.user.id,
-        backUrl: req.session.backUrl,
-        expiredAt: addSeconds(Date.now(), parseInt(config.get('core.refreshInterval'), 10)).valueOf(),
-      });
-      const redirectUrl = urlResolve({ query: { encrypted } }, req.session.callback);
-      res.redirect(redirectUrl);
-    }
+    (req, res, next) => {
+      req.session.expiredAt = addSeconds(Date.now(), parseInt(config.get('core.adapterRefreshInterval'), 10)).valueOf();
+      return next();
+    },
+    callbackAfterAuthed
   );
 });
 

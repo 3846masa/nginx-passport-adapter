@@ -13,7 +13,8 @@ module.exports = {
         port: this.core.port,
       });
     }),
-    refreshInterval: '3600',
+    appRefreshInterval: '86400',
+    adapterRefreshInterval: '604800',
     port: '3000',
   },
 };

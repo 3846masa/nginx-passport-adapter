@@ -2,7 +2,8 @@
   "core": {
     "secretKey": "NGX_PASSPORT_SECRET_KEY",
     "hostUrl": "NGX_PASSPORT_HOST_URL",
-    "refreshInterval": "NGX_PASSPORT_REFRESH_INTERVAL",
+    "appRefreshInterval": "NGX_PASSPORT_APP_REFRESH_INTERVAL",
+    "adapterRefreshInterval": "NGX_PASSPORT_ADAPTER_REFRESH_INTERVAL",
     "defaultProvider": "NGX_PASSPORT_DEFAULT_PROVIDER",
     "port": "PORT"
   },
